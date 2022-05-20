@@ -1,10 +1,21 @@
-require('dotenv').config();
+require('dotenv').config()
+const bunyan = require('bunyan')
+const path = require('path')
+const fs = require('fs')
 
-const path = require('path');
+const loggers = {
+  development: () =>
+    bunyan.createLogger({ name: 'development', level: 'debug' }),
+  production: () =>
+    bunyan.createLogger({ name: 'production', level: 'production' }),
+  test: () => bunyan.createLogger({ name: 'test', level: 'fatal' }),
+}
 
 module.exports = {
   development: {
     sitename: 'Roux Meetups [Development]',
+    log: loggers.development,
+    ssl: {},
     data: {
       speakers: path.join(__dirname, '../data/speakers.json'),
       feedback: path.join(__dirname, '../data/feedback.json'),
@@ -16,6 +27,8 @@ module.exports = {
   },
   production: {
     sitename: 'Roux Meetups',
+    log: loggers.production,
+    ssl: {},
     data: {
       speakers: path.join(__dirname, '../data/speakers.json'),
       feedback: path.join(__dirname, '../data/feedback.json'),
@@ -27,6 +40,8 @@ module.exports = {
   },
   test: {
     sitename: 'Roux Meetups [Test]',
+    log: loggers.test,
+    ssl: {},
     data: {
       speakers: path.join(__dirname, '../data/speakers.json'),
       feedback: path.join(__dirname, '../data/feedback-test.json'),
@@ -36,4 +51,4 @@ module.exports = {
       dsn: process.env.TEST_DB_DSN,
     },
   },
-};
+}
